@@ -24,25 +24,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5224432D304B4A2F007FB642 /* ScriptPilot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScriptPilot.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5224433A304B4A31007FB642 /* ScriptPilotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScriptPilotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		52244344304B4A31007FB642 /* ScriptPilotUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScriptPilotUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5224432D304B4A2F007FB642 /* ScriptJet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScriptJet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5224433A304B4A31007FB642 /* ScriptJetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScriptJetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		52244344304B4A31007FB642 /* ScriptJetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScriptJetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5224432F304B4A2F007FB642 /* ScriptPilot */ = {
+		5224432F304B4A2F007FB642 /* ScriptJet */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScriptPilot;
+			path = ScriptJet;
 			sourceTree = "<group>";
 		};
-		5224433D304B4A31007FB642 /* ScriptPilotTests */ = {
+		5224433D304B4A31007FB642 /* ScriptJetTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScriptPilotTests;
+			path = ScriptJetTests;
 			sourceTree = "<group>";
 		};
-		52244347304B4A31007FB642 /* ScriptPilotUITests */ = {
+		52244347304B4A31007FB642 /* ScriptJetUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScriptPilotUITests;
+			path = ScriptJetUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		52244324304B4A2F007FB642 = {
 			isa = PBXGroup;
 			children = (
-				5224432F304B4A2F007FB642 /* ScriptPilot */,
-				5224433D304B4A31007FB642 /* ScriptPilotTests */,
-				52244347304B4A31007FB642 /* ScriptPilotUITests */,
+				5224432F304B4A2F007FB642 /* ScriptJet */,
+				5224433D304B4A31007FB642 /* ScriptJetTests */,
+				52244347304B4A31007FB642 /* ScriptJetUITests */,
 				5224432E304B4A2F007FB642 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		5224432E304B4A2F007FB642 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5224432D304B4A2F007FB642 /* ScriptPilot.app */,
-				5224433A304B4A31007FB642 /* ScriptPilotTests.xctest */,
-				52244344304B4A31007FB642 /* ScriptPilotUITests.xctest */,
+				5224432D304B4A2F007FB642 /* ScriptJet.app */,
+				5224433A304B4A31007FB642 /* ScriptJetTests.xctest */,
+				52244344304B4A31007FB642 /* ScriptJetUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5224432C304B4A2F007FB642 /* ScriptPilot */ = {
+		5224432C304B4A2F007FB642 /* ScriptJet */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5224434E304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptPilot" */;
+			buildConfigurationList = 5224434E304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptJet" */;
 			buildPhases = (
 				52244329304B4A2F007FB642 /* Sources */,
 				5224432A304B4A2F007FB642 /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				5224432F304B4A2F007FB642 /* ScriptPilot */,
+				5224432F304B4A2F007FB642 /* ScriptJet */,
 			);
-			name = ScriptPilot;
+			name = ScriptJet;
 			packageProductDependencies = (
 			);
 			productName = ScriptPilot;
-			productReference = 5224432D304B4A2F007FB642 /* ScriptPilot.app */;
+			productReference = 5224432D304B4A2F007FB642 /* ScriptJet.app */;
 			productType = "com.apple.product-type.application";
 		};
-		52244339304B4A31007FB642 /* ScriptPilotTests */ = {
+		52244339304B4A31007FB642 /* ScriptJetTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 52244351304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptPilotTests" */;
+			buildConfigurationList = 52244351304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptJetTests" */;
 			buildPhases = (
 				52244336304B4A31007FB642 /* Sources */,
 				52244337304B4A31007FB642 /* Frameworks */,
@@ -131,18 +131,18 @@
 				5224433C304B4A31007FB642 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				5224433D304B4A31007FB642 /* ScriptPilotTests */,
+				5224433D304B4A31007FB642 /* ScriptJetTests */,
 			);
-			name = ScriptPilotTests;
+			name = ScriptJetTests;
 			packageProductDependencies = (
 			);
 			productName = ScriptPilotTests;
-			productReference = 5224433A304B4A31007FB642 /* ScriptPilotTests.xctest */;
+			productReference = 5224433A304B4A31007FB642 /* ScriptJetTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		52244343304B4A31007FB642 /* ScriptPilotUITests */ = {
+		52244343304B4A31007FB642 /* ScriptJetUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 52244354304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptPilotUITests" */;
+			buildConfigurationList = 52244354304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptJetUITests" */;
 			buildPhases = (
 				52244340304B4A31007FB642 /* Sources */,
 				52244341304B4A31007FB642 /* Frameworks */,
@@ -154,13 +154,13 @@
 				52244346304B4A31007FB642 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				52244347304B4A31007FB642 /* ScriptPilotUITests */,
+				52244347304B4A31007FB642 /* ScriptJetUITests */,
 			);
-			name = ScriptPilotUITests;
+			name = ScriptJetUITests;
 			packageProductDependencies = (
 			);
 			productName = ScriptPilotUITests;
-			productReference = 52244344304B4A31007FB642 /* ScriptPilotUITests.xctest */;
+			productReference = 52244344304B4A31007FB642 /* ScriptJetUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 52244328304B4A2F007FB642 /* Build configuration list for PBXProject "ScriptPilot" */;
+			buildConfigurationList = 52244328304B4A2F007FB642 /* Build configuration list for PBXProject "ScriptJet" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5224432C304B4A2F007FB642 /* ScriptPilot */,
-				52244339304B4A31007FB642 /* ScriptPilotTests */,
-				52244343304B4A31007FB642 /* ScriptPilotUITests */,
+				5224432C304B4A2F007FB642 /* ScriptJet */,
+				52244339304B4A31007FB642 /* ScriptJetTests */,
+				52244343304B4A31007FB642 /* ScriptJetUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		5224433C304B4A31007FB642 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5224432C304B4A2F007FB642 /* ScriptPilot */;
+			target = 5224432C304B4A2F007FB642 /* ScriptJet */;
 			targetProxy = 5224433B304B4A31007FB642 /* PBXContainerItemProxy */;
 		};
 		52244346304B4A31007FB642 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5224432C304B4A2F007FB642 /* ScriptPilot */;
+			target = 5224432C304B4A2F007FB642 /* ScriptJet */;
 			targetProxy = 52244345304B4A31007FB642 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -398,10 +398,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZFAQZ35YP7;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -430,10 +429,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZFAQZ35YP7;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -470,7 +468,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScriptPilot.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScriptPilot";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScriptJet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScriptJet";
 			};
 			name = Debug;
 		};
@@ -491,7 +489,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScriptPilot.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScriptPilot";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScriptJet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScriptJet";
 			};
 			name = Release;
 		};
@@ -536,7 +534,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		52244328304B4A2F007FB642 /* Build configuration list for PBXProject "ScriptPilot" */ = {
+		52244328304B4A2F007FB642 /* Build configuration list for PBXProject "ScriptJet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5224434C304B4A31007FB642 /* Debug */,
@@ -545,7 +543,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5224434E304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptPilot" */ = {
+		5224434E304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptJet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5224434F304B4A31007FB642 /* Debug */,
@@ -554,7 +552,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		52244351304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptPilotTests" */ = {
+		52244351304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptJetTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				52244352304B4A31007FB642 /* Debug */,
@@ -563,7 +561,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		52244354304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptPilotUITests" */ = {
+		52244354304B4A31007FB642 /* Build configuration list for PBXNativeTarget "ScriptJetUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				52244355304B4A31007FB642 /* Debug */,
