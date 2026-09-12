@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import ScriptPilot
+@testable import ScriptJet
 
 final class ScriptPilotTests: XCTestCase {
 
