@@ -11,6 +11,8 @@ extension Color {
     static let statusAmberSoft = Color(red: 0.984, green: 0.945, blue: 0.871) // #FBF1DE
     static let statusRed       = Color(red: 0.839, green: 0.278, blue: 0.235) // #D6473C
     static let statusRedSoft   = Color(red: 0.984, green: 0.918, blue: 0.910) // #FBEAE8
+    static let statusOrange     = Color(red: 0.880, green: 0.440, blue: 0.120) // #E0701F
+    static let statusOrangeSoft = Color(red: 0.988, green: 0.925, blue: 0.871)// #FCEDE0
 
     static let panelSunken = Color(nsColor: .underPageBackgroundColor)
 }
@@ -37,7 +39,8 @@ struct StatusBanner: View {
 
     private var softColor: Color {
         switch status {
-        case .succeeded, .running: return .statusGreenSoft
+        case .succeeded:        return .statusGreenSoft
+        case .running:              return .statusOrangeSoft
         case .overdue, .paused:    return .statusAmberSoft
         case .failed:               return .statusRedSoft
         }

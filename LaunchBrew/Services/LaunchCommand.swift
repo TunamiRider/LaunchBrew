@@ -1,6 +1,6 @@
 //
 //  LaunchCommand.swift
-//  ScriptJet
+//  LaunchBrew
 //
 //  Created by Yuki Suzuki on 9/7/26.
 //
@@ -20,6 +20,7 @@ struct LaunchCommand: Hashable {
     var isRepeating: Bool?
     var intervalMinutes: Int?
     var selectedDays: Set<Weekday>?
+    var interpreterPath: String?
 
     enum Kind: Hashable {
         case unixExecutable
@@ -296,7 +297,7 @@ extension LaunchCommand {
         
         // 1. Get/Create ~/Library/Application Support/YourAppName/Scripts
         let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            .appendingPathComponent("ScriptJet/Scripts", isDirectory: true)
+            .appendingPathComponent("LaunchBrew/Scripts", isDirectory: true)
         
         try fileManager.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
         

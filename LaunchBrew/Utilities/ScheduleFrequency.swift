@@ -1,6 +1,6 @@
 //
 //  ScheduleFrequency.swift
-//  ScriptJet
+//  LaunchBrew
 //
 //  Created by Yuki Suzuki on 9/10/26.
 //

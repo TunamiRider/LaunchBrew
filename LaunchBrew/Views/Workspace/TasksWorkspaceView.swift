@@ -27,6 +27,8 @@ struct TasksWorkspaceView: View {
 }
 
 #Preview {
+    
+    
     TasksWorkspaceView()
         .environmentObject(TaskStore())
         .frame(width: 1100, height: 640)
