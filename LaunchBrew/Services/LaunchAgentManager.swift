@@ -90,9 +90,9 @@ final class LaunchAgentManager {
 
         // 4. Bootstrap fresh plist into launchd
         let bootstrapStatus = runProcess("/bin/launchctl", args: ["bootstrap", "gui/\(currentUID)", plistURL.path])
-        if bootstrapStatus.exitCode != 0 && !bootstrapStatus.output.isEmpty {
-            print("Bootstrap notice: \(bootstrapStatus.output)")
-        }
+//        if bootstrapStatus.exitCode != 0 && !bootstrapStatus.output.isEmpty {
+//            print("Bootstrap notice: \(bootstrapStatus.output)")
+//        }
 
         // 5. Execute and return results using the standalone test runner
         return try await runTask(
@@ -303,7 +303,7 @@ final class LaunchAgentManager {
         let result = runProcess("/bin/launchctl", args: ["kill", "\(signal)", targetService])
         
         if result.exitCode == 0 {
-            print("Successfully sent signal \(signal) to service: \(label)")
+            // print("Successfully sent signal \(signal) to service: \(label)")
             return true
         } else {
             print("Failed to stop service \(label): \(result.output)")
@@ -347,13 +347,13 @@ final class LaunchAgentManager {
         
         if bootstrapStatus.exitCode != 0 {
             // If bootstrap failed and output exists, throw or log warning
-            if !bootstrapStatus.output.isEmpty {
-                print("Bootstrap error for \(label): \(bootstrapStatus.output)")
-            }
+//            if !bootstrapStatus.output.isEmpty {
+//                print("Bootstrap error for \(label): \(bootstrapStatus.output)")
+//            }
             throw TestRunnerError.executionFailed(bootstrapStatus.output)
         }
 
-        print("Successfully scheduled \(label) without running a test.")
+        // print("Successfully scheduled \(label) without running a test.")
         return true
     }
     
@@ -390,16 +390,16 @@ final class LaunchAgentManager {
         // Exit code 0 (success) or 3 (ESRCH / not running) are both valid success states
         let isBootoutSuccessful = (result.exitCode == 0 || result.exitCode == 3)
         
-        if !isBootoutSuccessful && !result.output.contains("No such process") {
-            print("Bootout notice: \(result.output)")
-        }
+//        if !isBootoutSuccessful && !result.output.contains("No such process") {
+//            print("Bootout notice: \(result.output)")
+//        }
         
         // 3. Optionally remove the .plist file from ~/Library/LaunchAgents/
         var isFileDeleted = true
         if deletePlistFile {
             do {
                 try fileManager.removeItem(at: plistURL)
-                print("Successfully deleted plist at: \(plistURL.path)")
+                // print("Successfully deleted plist at: \(plistURL.path)")
             } catch {
                 isFileDeleted = false
                 print("Warning: Failed to delete plist file: \(error.localizedDescription)")
@@ -409,52 +409,6 @@ final class LaunchAgentManager {
         // Return true only if launchctl bootout succeeded and file deletion (if requested) succeeded
         return isBootoutSuccessful && isFileDeleted
     }
-    
-    
-    /// Syncs real-time launchd status and creates new RunRecord entries when runs increment.
-//    @MainActor
-//    static func syncExecutionHistory(for task: ScriptTask, modelContext: ModelContext){
-//        
-//        guard let launchStatus = fetchLaunchdStatus(for: task.name) else { return }
-//        
-//        let latestLogs = fetchLaunchdLogs(for: task.name, timeWindow: "1m", logPredicateType: .log)
-//                
-//        // 1. Determine the highest run number recorded so far
-//        let lastRecordedRun = task.runs.count
-//        
-//        
-//        if launchStatus.runs > lastRecordedRun {
-//            
-//            let newRecordCount = launchStatus.runs - lastRecordedRun
-//            
-//            
-//            for _ in 1...newRecordCount {
-//                
-//                let startedAt = latestLogs.last?.timestamp ?? Date()
-//                
-//                // Determine the task status cleanly without overwriting
-//                let taskStatus: TaskStatus
-//                if launchStatus.isPaused {
-//                    taskStatus = .paused
-//                } else if !launchStatus.isSuccess {
-//                    taskStatus = .failed(exitCode: launchStatus.lastExitCode ?? 1)
-//                } else {
-//                    taskStatus = .succeeded
-//                }
-//                        
-//                
-//                let newRecord = RunRecord(taskName: task.name,
-//                                          startedAt: startedAt,
-//                                          status: taskStatus,
-//                                          task: task)
-//                
-//                task.runs.append(newRecord)
-//                
-//            }
-//            
-//            try? modelContext.save()
-//        }
-//    }
     @MainActor
     static func syncExecutionHistory(for task: ScriptTask, modelContext: ModelContext) {
         // ✋ Skip background sync if runNow is actively controlling and tracking execution duration

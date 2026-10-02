@@ -6,9 +6,9 @@
 //
 
 import XCTest
-@testable import ScriptJet
+@testable import LaunchBrew
 
-final class ScriptPilotTests: XCTestCase {
+final class LaunchBrewTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

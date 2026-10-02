@@ -130,9 +130,9 @@ private struct ScrollWheelHandler: NSViewRepresentable {
     }
 }
 
-#Preview {
-    @Previewable @State var hour = 12
-    @Previewable @State var minute = 0
-    
-    FifteenMinuteTimePicker(selectedHour: $hour, selectedMinute: $minute)
-}
+//#Preview {
+//    @Previewable @State var hour = 12
+//    @Previewable @State var minute = 0
+//    
+//    FifteenMinuteTimePicker(selectedHour: $hour, selectedMinute: $minute)
+//}

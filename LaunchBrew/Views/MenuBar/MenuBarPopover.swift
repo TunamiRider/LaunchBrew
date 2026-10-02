@@ -1,30 +1,53 @@
 import SwiftUI
+import SwiftData
 
 struct MenuBarPopover: View {
-    @EnvironmentObject var store: TaskStore
-
+    @Query(sort: \ScriptTask.name) private var scriptTaskList: [ScriptTask]
     private var failingTasks: [ScriptTask] {
-        store.tasks.filter {
+        scriptTaskList.filter {
             if case .failed = $0.status { return true }
             return $0.status == .overdue
         }
     }
 
     private var upcomingTasks: [ScriptTask] {
-        store.tasks
-            .filter { $0.status == .succeeded }
-            .sorted { $0.nextRunDate < $1.nextRunDate }
+        scriptTaskList
+//            .filter { $0.status == .succeeded && $0.nextRunDate != nil }
+//            .compactMap { task -> (task: ScriptTask, date: Date)? in
+//                        guard let date = task.nextRunDate else { return nil }
+//                        return (task, task.nextRunDate)
+//                    }
+            .filter { $0.status == .succeeded && $0.nextRunDate != nil }
+            .sorted { ($0.nextRunDate ?? .distantFuture) < ($1.nextRunDate ?? .distantFuture) }
             .prefix(2)
             .map { $0 }
     }
 
     private var nextTask: ScriptTask? {
-        store.tasks.sorted { $0.nextRunDate < $1.nextRunDate }.first
+        scriptTaskList
+                .filter { $0.nextRunDate != nil }
+                .sorted { ($0.nextRunDate ?? .distantFuture) < ($1.nextRunDate ?? .distantFuture) }
+                .first
+    }
+    private var nextRunDateText: String {
+        guard let nextRunDate = nextTask?.nextRunDate else { return "-" }
+        
+        return nextRunDate.formattedRelativeShort()
+    }
+    private var nextRunDateTextShort: String {
+        guard let nextRunDate = nextTask?.nextRunDate else { return "-" }
+        
+        return nextRunDate.formatted(date: .omitted, time: .shortened)
+    }
+    private var nextRunDateTextRelativeShort: String {
+        guard let nextRunDate = nextTask?.nextRunDate else { return "-" }
+        
+        return nextRunDate.formattedRelativeShort()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("ScriptJet")
+            Text("LaunchBrew")
                 .font(.system(size: 13, weight: .semibold))
                 .padding(EdgeInsets(top: 14, leading: 16, bottom: 10, trailing: 16))
 
@@ -32,13 +55,13 @@ struct MenuBarPopover: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("NEXT RUN").font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary)
-                        Text(nextTask.nextRunDate.formattedRelativeShort())
+                        Text(nextRunDateText)
                             .font(.system(size: 16, weight: .bold, design: .monospaced))
                     }
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(nextTask.name).font(.system(size: 11.5, weight: .medium))
-                        Text(nextTask.nextRunDate.formatted(date: .omitted, time: .shortened))
+                        Text(nextRunDateTextShort)
                             .font(.system(size: 10.5))
                             .foregroundStyle(.secondary)
                     }
@@ -53,7 +76,7 @@ struct MenuBarPopover: View {
 
             if !failingTasks.isEmpty {
                 sectionLabel("CURRENT FAILURES")
-                ForEach(failingTasks) { task in
+                ForEach(failingTasks, id: \.id) { task in
                     HStack(spacing: 9) {
                         StatusDot(status: task.status)
                         Text(task.name).font(.system(size: 12.5, weight: .medium))
@@ -61,7 +84,7 @@ struct MenuBarPopover: View {
                             .font(.system(size: 10.5, design: .monospaced))
                             .foregroundStyle(.secondary)
                         Spacer()
-                        Button("Run Now") { store.runNow(task) }
+                        Button("Run Now") { /*task.runNow(in: modelContext)*/ }
                             .buttonStyle(.borderedProminent)
                             .tint(.accentJet)
                             .controlSize(.small)
@@ -76,7 +99,7 @@ struct MenuBarPopover: View {
                     StatusDot(status: task.status)
                     Text(task.name).font(.system(size: 12.5))
                     Spacer()
-                    Text("in \(task.nextRunDate.formattedRelativeShort())")
+                    Text("in \(nextRunDateTextRelativeShort)")
                         .font(.system(size: 10.5, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }
@@ -86,7 +109,7 @@ struct MenuBarPopover: View {
             Divider().padding(.top, 8)
 
             HStack {
-                Button("Open ScriptJet") {
+                Button("Open LaunchBrew") {
                     NSApp.activate(ignoringOtherApps: true)
                 }
                 .buttonStyle(.plain)
@@ -115,7 +138,7 @@ struct MenuBarPopover: View {
     }
 }
 
-#Preview {
-    MenuBarPopover()
-        .environmentObject(TaskStore())
-}
+//#Preview {
+//    MenuBarPopover()
+//        .environmentObject(TaskStore())
+//}

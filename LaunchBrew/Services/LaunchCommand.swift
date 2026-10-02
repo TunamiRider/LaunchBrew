@@ -353,7 +353,7 @@ extension LaunchCommand {
         let destinationURL = launchAgentsDirectory.appendingPathComponent("\(self.executableName).plist")
         do {
             try plistData.write(to: destinationURL, options: .atomic)
-            print("Successfully saved LaunchAgent to: \(destinationURL.path)")
+            // print("Successfully saved LaunchAgent to: \(destinationURL.path)")
             return destinationURL
         } catch {
             throw ExportError.writeFailed(error)

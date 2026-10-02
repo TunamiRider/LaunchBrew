@@ -26,7 +26,7 @@ private struct GeneralSettingsTab: View {
 
     var body: some View {
         Form {
-            Toggle("Launch ScriptJet at login", isOn: $launchAtLogin)
+            Toggle("Launch LaunchBrew at login", isOn: $launchAtLogin)
             Toggle("Show menu-bar icon", isOn: $showMenuBarIcon)
             Toggle("Retry once on failure after 5 minutes", isOn: $retryOnFailure)
         }
@@ -49,7 +49,7 @@ private struct NotificationsSettingsTab: View {
 
 private struct ScriptsAndLogsSettingsTab: View {
     @AppStorage("scriptsFolder") private var scriptsFolder = "~/Scripts"
-    @AppStorage("logsFolder") private var logsFolder = "~/Library/Logs/ScriptJet"
+    @AppStorage("logsFolder") private var logsFolder = "~/Library/Logs/LaunchBrew"
     @AppStorage("retentionDays") private var retentionDays = 30
 
     var body: some View {
@@ -83,12 +83,12 @@ private struct AdvancedSettingsTab: View {
         Form {
             Text("Generated LaunchAgent identifiers, environment defaults, and diagnostic export live here.")
                 .foregroundStyle(.secondary)
-            Button("Reset ScriptJet…", role: .destructive) {}
+            Button("Reset LaunchBrew…", role: .destructive) {}
         }
         .padding(20)
     }
 }
 
-#Preview {
-    SettingsView()
-}
+//#Preview {
+//    SettingsView()
+//}

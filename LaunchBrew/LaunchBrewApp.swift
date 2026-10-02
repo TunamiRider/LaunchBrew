@@ -1,30 +1,39 @@
 import SwiftUI
+import SwiftData
 
 @main
-struct ScriptJetApp: App {
-    @StateObject private var store = TaskStore()
+struct LaunchBrewApp: App {
 
     var body: some Scene {
         WindowGroup {
             RootTabView()
-                .environmentObject(store)
                 .frame(minWidth: 900, minHeight: 600)
         }
+        .modelContainer(for: [ScriptTask.self, RunRecord.self])
         .windowResizability(.contentSize)
 
         Settings {
             SettingsView()
-                .environmentObject(store)
         }
+        .modelContainer(for: [ScriptTask.self, RunRecord.self])
 
         MenuBarExtra {
             MenuBarPopover()
-                .environmentObject(store)
         } label: {
-            Image(systemName: store.failingCount > 0 ? "bolt.trianglebadge.exclamationmark" : "bolt")
+            Image(systemName: 1 > 0 ? "bolt.trianglebadge.exclamationmark" : "bolt")
         }
+        .modelContainer(for: [ScriptTask.self, RunRecord.self])
         .menuBarExtraStyle(.window)
     }
+}
+
+
+
+enum AppTab: String, CaseIterable, Identifiable {
+    case tasks = "Tasks"
+    case activity = "Activity"
+    
+    var id: String { rawValue }
 }
 
 /// Simple top-level switcher between the Tasks Workspace and Activity screens.
@@ -33,10 +42,15 @@ private struct RootTabView: View {
     var body: some View {
         TabView {
             TasksWorkspaceView()
-                .tabItem { Label("Tasks", systemImage: "list.bullet.rectangle") }
+                .tabItem {
+                    Label("Tasks", systemImage: "list.bullet.rectangle")
+                }
 
             ActivityView()
-                .tabItem { Label("Activity", systemImage: "clock.arrow.circlepath") }
+                .tabItem {
+                    Label("Activity", systemImage: "clock.arrow.circlepath")
+                }
         }
     }
 }
+

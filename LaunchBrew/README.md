@@ -1,12 +1,12 @@
-# ScriptJet — SwiftUI Source
+# LaunchBrew — SwiftUI Source
 
 Implements the six MVP screens as real SwiftUI views, matching the earlier HTML concept 1:1 in structure and the green/amber/red reliability language.
 
 ## How to open this
 
-1. In Xcode: **File → New → Project → macOS → App**. Name it `ScriptJet`, interface **SwiftUI**, language **Swift**. Deployment target **macOS 13 (Ventura)** or later (uses `NavigationSplitView`, `Table`, and `MenuBarExtra`).
-2. Delete the generated `ContentView.swift` and `ScriptJetApp.swift`.
-3. Drag this whole `ScriptJet` folder into the project navigator (check "Copy items if needed").
+1. In Xcode: **File → New → Project → macOS → App**. Name it `LaunchBrew`, interface **SwiftUI**, language **Swift**. Deployment target **macOS 13 (Ventura)** or later (uses `NavigationSplitView`, `Table`, and `MenuBarExtra`).
+2. Delete the generated `ContentView.swift` and `LaunchBrewApp.swift`.
+3. Drag this whole `LaunchBrew` folder into the project navigator (check "Copy items if needed").
 4. Build and run. The main window opens on the Tasks Workspace; a lightning-bolt icon appears in the menu bar — click it for the popover.
 
 ## What's real vs. placeholder
@@ -19,7 +19,7 @@ Implements the six MVP screens as real SwiftUI views, matching the earlier HTML 
 ## File map
 
 ```
-ScriptJetApp.swift              App entry: main window + MenuBarExtra
+LaunchBrewApp.swift              App entry: main window + MenuBarExtra
 Models/ScriptTask.swift         Task model + TaskStatus (drives status color everywhere)
 Models/RunRecord.swift          One execution record
 Support/StatusStyle.swift       Color palette + StatusDot + StatusBanner

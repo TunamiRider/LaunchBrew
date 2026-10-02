@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class ScriptJetUITestsLaunchTests: XCTestCase {
+final class LaunchBrewUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

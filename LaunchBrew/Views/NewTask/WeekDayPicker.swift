@@ -1,6 +1,6 @@
 //
 //  WeekDayPicker.swift
-//  ScriptJet
+//  LaunchBrew
 //
 //  Created by Yuki Suzuki on 9/8/26.
 //
@@ -58,19 +58,19 @@ struct WeekdayPicker: View {
 }
 
 
-#Preview{
-    @Previewable @State var selectedDays: Set<Weekday> = []
-    
-    VStack(alignment: .leading, spacing: 12) {
-                Text("Repeat Schedule")
-                    .font(.headline)
-                
-                WeekdayPicker(selectedDays: $selectedDays)
-
-        Text("Selected day indices: \(selectedDays.map(\.fullName).joined(separator: ", "))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-        
-            }
-            .padding()
-}
+//#Preview{
+//    @Previewable @State var selectedDays: Set<Weekday> = []
+//    
+//    VStack(alignment: .leading, spacing: 12) {
+//                Text("Repeat Schedule")
+//                    .font(.headline)
+//                
+//                WeekdayPicker(selectedDays: $selectedDays)
+//
+//        Text("Selected day indices: \(selectedDays.map(\.fullName).joined(separator: ", "))")
+//                    .font(.caption)
+//                    .foregroundColor(.secondary)
+//        
+//            }
+//            .padding()
+//}

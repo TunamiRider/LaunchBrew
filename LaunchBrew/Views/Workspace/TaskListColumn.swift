@@ -1,20 +1,21 @@
 import SwiftUI
-
+import SwiftData
 struct TaskListColumn: View {
-    @EnvironmentObject var store: TaskStore
+    @Query(sort: \ScriptTask.name) private var scriptTaskList: [ScriptTask]
     let selection: SidebarSelection
     @Binding var selectedTask: ScriptTask?
     @State private var query = ""
     @State private var showingNewTask = false
 
     private var filtered: [ScriptTask] {
-        var result = store.tasks
+        var result = scriptTaskList
         switch selection {
         case .all: break
+        case .succeeded: result = result.filter { if case .succeeded = $0.status { return true}; return false }
         case .failing: result = result.filter { if case .failed = $0.status { return true }; return false }
         case .dueSoon: result = result.filter { $0.status == .overdue }
         case .paused: result = result.filter { $0.isPaused }
-        case .folder(let name): result = result.filter { $0.folder == name }
+        case .folder(let name): result = result.filter { $0.workingDirectory == name }
         }
         guard !query.isEmpty else { return result }
         return result.filter { $0.name.localizedCaseInsensitiveContains(query) }
@@ -56,7 +57,8 @@ private struct TaskRow: View {
     let task: ScriptTask
 
     private var nextRunText: String {
-        task.nextRunDate < Date() ? "overdue" : "in \(task.nextRunDate.formattedRelativeShort())"
+        guard let nextRunDate = task.nextRunDate else { return "-" }
+        return nextRunDate < Date() ? "overdue" : "in \(nextRunDate.formattedRelativeShort())"
     }
 
     var body: some View {
@@ -84,13 +86,29 @@ private struct TaskRow: View {
 }
 
 extension Date {
-    /// "3h", "1d 4h" style relative label used throughout the app.
-    func formattedRelativeShort(from reference: Date = Date()) -> String {
-        let seconds = abs(self.timeIntervalSince(reference))
-        let hours = Int(seconds / 3600)
-        if hours < 24 { return "\(max(hours, 0))h" }
-        let days = hours / 24
-        let remHours = hours % 24
-        return "\(days)d \(remHours)h"
-    }
+    /// "1d 5h 3m", "5h 12m", "3m" style relative label used throughout the app.
+        func formattedRelativeShort(from reference: Date = Date()) -> String {
+            let totalSeconds = Int(abs(self.timeIntervalSince(reference)))
+            
+            let days = totalSeconds / 86400
+            let hours = (totalSeconds % 86400) / 3600
+            let minutes = (totalSeconds % 3600) / 60
+            
+            var parts: [String] = []
+            
+            if days > 0 {
+                parts.append("\(days)d")
+            }
+            
+            if hours > 0 {
+                parts.append("\(hours)h")
+            }
+            
+            // Show minutes if present or if total duration is under an hour (< 1h)
+            if minutes > 0 || (days == 0 && hours == 0) {
+                parts.append("\(minutes)m")
+            }
+            
+            return parts.joined(separator: " ")
+        }
 }

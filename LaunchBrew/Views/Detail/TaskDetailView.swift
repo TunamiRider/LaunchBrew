@@ -75,7 +75,7 @@ private struct OverviewTab: View {
             VStack(alignment: .leading, spacing: 14) {
                 GroupBox {
                     HStack(spacing: 10) {
-                        chip("Countdown", task.nextRunDate > Date() ? "in \(task.nextRunDate.formattedRelativeShort())" : "overdue")
+                        chip("Countdown", CountdownText)
                         chip("At", task.scheduleDescription)
                     }
                     .padding(.top, 4)
@@ -120,13 +120,17 @@ private struct OverviewTab: View {
         .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.separator))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
+    private var CountdownText: String {
+        guard let nextRunDate = task.nextRunDate else { return "-" }
+        return nextRunDate > Date() ? "in \(nextRunDate.formattedRelativeShort())" : "overdue"
+    }
 }
 
 private struct ReliabilityStrip: View {
     let runs: [RunRecord]
 
     var body: some View {
-        let sample = runs.isEmpty ? Array(repeating: RunRecord(id: UUID(), taskName: "", startedAt: Date(), duration: 0, status: .succeeded, exitCode: 0), count: 13) + [RunRecord(id: UUID(), taskName: "", startedAt: Date(), duration: 0, status: .failed(exitCode: 1), exitCode: 1)] : runs
+        let sample = runs.isEmpty ? Array(repeating: RunRecord(id: UUID(), taskName: "", startedAt: Date(), duration: 0, status: .succeeded), count: 13) + [RunRecord(id: UUID(), taskName: "", startedAt: Date(), duration: 0, status: .failed(exitCode: 1))] : runs
 
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 3) {
@@ -151,11 +155,16 @@ private struct ScheduleTab: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Frequency: \(task.scheduleDescription)")
-            Text("Next run: \(task.nextRunDate.formatted(date: .abbreviated, time: .shortened))")
+            Text("Next run: \(nextRunDateText)")
                 .foregroundStyle(.secondary)
         }
         .font(.system(size: 13))
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    private var nextRunDateText: String {
+        guard let nextRunDate = task.nextRunDate else { return "-" }
+        
+        return nextRunDate.formatted(date: .abbreviated, time: .shortened)
     }
 }
 
@@ -190,7 +199,7 @@ private struct AdvancedTab: View {
     }
 }
 
-#Preview {
-    TaskDetailView(task: SampleData.tasks[0])
-        .frame(width: 760, height: 560)
-}
+//#Preview {
+//    TaskDetailView(task: SampleData.tasks[0])
+//        .frame(width: 760, height: 560)
+//}

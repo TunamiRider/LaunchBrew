@@ -1,6 +1,6 @@
 //
 //  TimeWheelPicker.swift
-//  ScriptJet
+//  LaunchBrew
 //
 //  Created by Yuki Suzuki on 9/8/26.
 //
@@ -64,7 +64,7 @@ struct WheelColumn: View {
 
 /// Pairs an hour wheel (0–23) with a minute wheel restricted to 15-minute
 /// steps (00 / 15 / 30 / 45), bound to a single `Date`. Matches the 24-hour
-/// "HH:mm" format already used elsewhere in ScriptJet (e.g. "Daily · 02:00").
+/// "HH:mm" format already used elsewhere in LaunchBrew (e.g. "Daily · 02:00").
 struct TimeWheelPicker: View {
     @Binding var date: Date
 
@@ -102,8 +102,8 @@ struct TimeWheelPicker: View {
     }
 }
 
-#Preview {
-    @Previewable @State var date = Date()
-    TimeWheelPicker(date: $date)
-        .padding()
-}
+//#Preview {
+//    @Previewable @State var date = Date()
+//    TimeWheelPicker(date: $date)
+//        .padding()
+//}

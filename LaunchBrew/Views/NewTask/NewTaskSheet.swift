@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import SwiftData
 
 private enum NewTaskStep: Int, CaseIterable {
     case script, schedule, test, confirm
@@ -35,6 +36,7 @@ struct NewTaskSheet: View {
     }
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @State private var step: NewTaskStep = .script // starts on Schedule to mirror the design walkthrough
     // 1. Key for storing the saved path in UserDefaults
     let lastDirKey = "LastOpenedDirectoryPath"
@@ -49,11 +51,13 @@ struct NewTaskSheet: View {
     @State private var minute: Int
     @State private var isRepeating: Bool = false
     @State private var intervalMinutes: Int = 15
+    @State private var interpreterPath: String = ""
     
     
     @State private var isRunningTest: Bool = false
     @State private var isRunningTestPassed: Bool = false
     @State private var isTested: Bool = false
+    @State private var isSkippingTest: Bool = false
     
     @State private var isCancelling: Bool = false
     @State private var isCanceled: Bool = false
@@ -77,7 +81,7 @@ struct NewTaskSheet: View {
         guard scriptPath.isEmpty == false else {
             return "File Not Selected."
         }
-        print("feefw \(scriptPath)")
+
         return (scriptPath as NSString).lastPathComponent
     }
 
@@ -152,8 +156,6 @@ struct NewTaskSheet: View {
             UserDefaults.standard.set(selectedDir.path, forKey: lastDirKey)
             
             selectLaunchCommand(at: url)
-//            print("Abs path: \(scriptPath)")
-//            print("Url string \(launchCommand?.executableURL.absoluteString ?? "")")
         }
         
 
@@ -194,10 +196,12 @@ struct NewTaskSheet: View {
 
             if isShellScript {
                 let interpreter = detectInterpreter(at: url)
+                self.interpreterPath = interpreter
                 launchCommand = LaunchCommand(
                     executableURL: url,
                     kind: .shellScript(interpreter: interpreter),
-                    arguments: []
+                    arguments: [],
+                    interpreterPath: interpreter
                 )
                 scriptPath = url.path.replacingOccurrences(
                     of: FileManager.default.homeDirectoryForCurrentUser.path,
@@ -291,7 +295,7 @@ struct NewTaskSheet: View {
                 .padding(12)
                 //.background(Color.panelSunken)
                 .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4])).foregroundStyle(.secondary.opacity(0.4)))
-                Text("Choose a script, or paste a shell command — ScriptJet treats both the same way.")
+                Text("Choose a script, or paste a shell command — LaunchBrew treats both the same way.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -438,6 +442,16 @@ struct NewTaskSheet: View {
             }
         }
     }
+    private var isScheduleValid: Bool {
+        switch frequency {
+        case .weekly:
+            // Ensures at least one day is selected
+            return !selectedDays.isEmpty
+        case .interval:
+            // Valid if repetition is enabled and the interval is greater than 0
+            return isRepeating && intervalMinutes > 0
+        }
+    }
 
     private var testStep: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -512,6 +526,14 @@ struct NewTaskSheet: View {
                         )
                 }
             }
+            if isSkippingTest {
+                HStack(spacing: 8) {
+                    AnimatedStatusBanner(
+                            title: "Skipping test…",
+                            themeColor: .cyan
+                        )
+                }
+            }
             
             if isCancelling {
                 HStack(spacing: 8) {
@@ -528,11 +550,11 @@ struct NewTaskSheet: View {
                     Label("Test Task", systemImage: "play.fill")
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(isRunningTest)
+                .disabled(isRunningTest || isSkippingTest)
 
                 Button("Skip Test", action: skipTest)
                     .buttonStyle(.bordered)
-                    .disabled(isRunningTest)
+                    .disabled(isRunningTest || isSkippingTest)
             }
             
             if isTested {
@@ -558,7 +580,6 @@ struct NewTaskSheet: View {
                 do {
                     // Retrieve plist URL saved by model
                     guard let plistURL = launchCommand?.getPlist() else {
-                        //print("Failed to retrieve the plist.")
                         errorMessage = "Failed to retrieve the plist."
                         isTested = true
                         isRunningTest = false
@@ -567,7 +588,7 @@ struct NewTaskSheet: View {
                     }
                     
                     // Execute test run directly using the saved plist
-                    let result = try await LaunchAgentManager.runTest(plistURL: plistURL)
+                    let result = try await LaunchAgentManager.registerWithTest(plistURL: plistURL)
                     
                     isTested = true
                     testDuration = result.formattedDuration
@@ -579,22 +600,22 @@ struct NewTaskSheet: View {
                         isRunningTestPassed = false
                     }
                     
-                    print("STDOUT Logs:\n\(result.stdout)")
-                    print("STDERR Logs:\n\(result.stderr)")
+                    // print("STDOUT Logs:\n\(result.stdout)")
+                    // print("STDERR Logs:\n\(result.stderr)")
                     return
                 } catch let error as LaunchCommand.ExportError {
                     errorMessage = error.errorDescription
                     isTested = true
                     isRunningTestPassed = false
                     isRunningTest = false
-                    print("Test Run Failed: \(error.localizedDescription)")
+                    // print("Test Run Failed: \(error.localizedDescription)")
                     return
                 } catch {
                     errorMessage = error.localizedDescription
                     isTested = true
                     isRunningTestPassed = false
                     isRunningTest = false
-                    print("Test Run Failed: \(error.localizedDescription)")
+                    // print("Test Run Failed: \(error.localizedDescription)")
                     return
                 }
             //}
@@ -606,41 +627,49 @@ struct NewTaskSheet: View {
     }
 
     private func skipTest() {
-        isTested = false
-        isRunningTestPassed = true
         // Proceed directly to saving/scheduling task
+        // Clear any previous error and update state
+        errorMessage = nil
+        isSkippingTest = true
+        
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1))
+            do {
+                // 1. Retrieve plist URL saved by model
+                guard let plistURL = launchCommand?.getPlist() else {
+                    errorMessage = "Failed to retrieve the plist."
+                    isTested = false
+                    isRunningTestPassed = false
+                    isSkippingTest = false
+                    return
+                }
+                
+                // 2. Register with launchd directly without kickstarting execution
+                try LaunchAgentManager.register(plistURL: plistURL)
+                
+                // 3. Set UI state to indicate test was skipped but task is registered successfully
+                isTested = false
+                testDuration = nil
+                isRunningTestPassed = true
+                isSkippingTest = false
+                
+            } catch let error as LaunchCommand.ExportError {
+                errorMessage = error.errorDescription
+                isTested = false
+                isRunningTestPassed = false
+                isSkippingTest = false
+                print("Skip Test / Registration Failed: \(error.localizedDescription)")
+                
+            } catch {
+                errorMessage = error.localizedDescription
+                isTested = false
+                isRunningTestPassed = false
+                isSkippingTest = false
+                print("Skip Test / Registration Failed: \(error.localizedDescription)")
+            }
+        }
     }
-//    private func cancel(){
-//        
-//        guard isRunningTestPassed else {
-//            dismiss()
-//            return
-//        }
-//        
-//        isCancelling = true
-//        Task { @MainActor in
-//            try? await Task.sleep(for: .seconds(10))
-//            
-//            do {
-//                // Retrieve plist URL saved by model
-//                guard let plistURL = launchCommand?.getPlist() else {
-//                    print("Failed to retrieve the plist.")
-//                    return
-//                }
-//                
-//                // Unregister from launchd AND delete the plist file from disk
-//                isCanceled = try LaunchAgentManager.unregister(plistURL: plistURL, deletePlistFile: true)
-//                print("Test agent unregistered and plist deleted.")
-//            } catch {
-//                print("Failed to unregister test agent: \(error.localizedDescription)")
-//            }
-//            
-//            isCancelling = false
-//            dismiss()
-//        }
-//        
-//    }
-    
+
     @MainActor
         private func cancel() async {
             guard isRunningTestPassed else {
@@ -668,7 +697,7 @@ struct NewTaskSheet: View {
                 isCanceled = try LaunchAgentManager.unregister(plistURL: plistURL, deletePlistFile: true)
                 
                 if isCanceled {
-                    print("Test agent unregistered and plist deleted.")
+                    // print("Test agent unregistered and plist deleted.")
                     showCancelAlert = true // 👈 Triggers popup
                 } else {
                     dismiss()
@@ -774,29 +803,22 @@ struct NewTaskSheet: View {
             }
             Spacer()
             
-            if step == .test {
+            if [.test, .script, .schedule].contains(step) {
                 
                 Button(role: .cancel){
-                    Task{
-                        await cancel()
+                    
+                    if step == .test {
+                        Task{
+                            await cancel()
+                        }
+                    }else {
+                        dismiss()
                     }
+
                 } label: {
                     Label("Cancel", systemImage: "xmark.circle.fill")
                 }
                 .buttonStyle(.bordered)
-//                Button(action: {
-//                    cancel()
-//                    
-//                    if isRunningTestPassed {
-//                        
-//                        
-//                        isRunningTestPassed = false
-//                    }
-//                    
-//                } ) {
-//                    Label("Cancel", systemImage: "xmark.circle.fill")
-//                }
-//                .buttonStyle(.bordered)
             }
 
             if step == .confirm {
@@ -814,20 +836,14 @@ struct NewTaskSheet: View {
                         command.intervalMinutes = self.intervalMinutes
                         command.selectedDays = self.selectedDays
                         command.arguments = [self.arguments]
+                        command.interpreterPath = self.interpreterPath
                         
                         self.launchCommand = command
                         
                         if let command = self.launchCommand {
                             do {
                                 let savedURL = try command.saveLaunchAgent()
-                                print("savedURL : \(savedURL)")
-                                // Saved to: ~/Library/LaunchAgents/com.yuki.photogenerator.plist
-                                
-                                
-                                //TEST ScriptTask
-                                
-                                
-                                //TEST ScriptTask
+                                // print("savedURL : \(savedURL)")
                             } catch {
                                 print("Error saving agent: \(error.localizedDescription)")
                             }
@@ -837,6 +853,20 @@ struct NewTaskSheet: View {
                     //Confirm
                     if step == .test && isRunningTestPassed {
                         //Create ScriptTask
+                        if let command = self.launchCommand {
+                            let executableName = command.executableName
+                            do {
+                                let scriptTask = try ScriptTask.createFromPlist(executableName: executableName)
+                                scriptTask.interpreterPath = command.interpreterPath
+                                modelContext.insert(scriptTask)
+                                try modelContext.save()
+                                
+                                // print("Successfully saved ScriptTask: \(scriptTask.name)")
+                            } catch {
+                                print("Failed to create or save ScriptTask from plist: \(error.localizedDescription)")
+                                            // Optionally handle error in UI (e.g., show alert)
+                            }
+                        }
                     }
             
                     //Script
@@ -851,7 +881,8 @@ struct NewTaskSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.accentJet)
-                //.disabled(scriptPath.isEmpty)
+                .disabled(step == .script && scriptPath.isEmpty)
+                .disabled(step == .schedule && !isScheduleValid)
                 .disabled(step == .test && !isRunningTestPassed)
                 
             }
@@ -868,6 +899,6 @@ struct NewTaskSheet: View {
     }
 }
 
-#Preview {
-    NewTaskSheet()
-}
+//#Preview {
+//    NewTaskSheet()
+//}

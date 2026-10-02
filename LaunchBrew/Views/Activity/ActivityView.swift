@@ -1,9 +1,15 @@
 import SwiftUI
-
+import SwiftData
+import Combine
 struct ActivityView: View {
-    @EnvironmentObject var store: TaskStore
+    //@EnvironmentObject var store: TaskStore
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \ScriptTask.name) private var scriptTaskList: [ScriptTask]
     @State private var filter: Filter = .all
     @State private var query = ""
+    @State private var showingClearConfirmation = false
+    
+    let symcTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     private enum Filter: String, CaseIterable, Identifiable {
         case all = "All", succeeded = "Succeeded", failed = "Failed", running = "Running"
@@ -11,7 +17,7 @@ struct ActivityView: View {
     }
 
     private var filtered: [RunRecord] {
-        var result = store.history
+        var result = scriptTaskList.flatMap{ $0.runs }.sorted{ $0.startedAt > $1.startedAt }
         switch filter {
         case .all: break
         case .succeeded: result = result.filter { $0.status == .succeeded }
@@ -31,6 +37,16 @@ struct ActivityView: View {
                         .tint(filter == f ? .primary : .secondary)
                 }
                 Spacer()
+                
+                // Clear History Button
+                Button(role: .destructive) {
+                    showingClearConfirmation = true
+                } label: {
+                    Label("Clear History", systemImage: "trash")
+                }
+                .buttonStyle(.bordered)
+                .disabled(filtered.isEmpty && scriptTaskList.allSatisfy { $0.runs.isEmpty })
+                
                 TextField("Search history…", text: $query)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 220)
@@ -65,11 +81,37 @@ struct ActivityView: View {
             }
         }
         .navigationTitle("Activity")
+        .alert("Clear Activity History?", isPresented: $showingClearConfirmation) {
+                    Button("Clear All", role: .destructive) {
+                        clearAllRunRecords()
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("This will permanently delete all run history logs across all tasks.")
+                }
+        .onReceive(symcTimer){ _ in
+            for task in scriptTaskList {
+                LaunchAgentManager.syncExecutionHistory(for: task, modelContext: modelContext)
+            }
+        }
+    }
+    
+    private func clearAllRunRecords(){
+        for task in scriptTaskList {
+            
+            for record in task.runs {
+                modelContext.delete(record)
+            }
+            
+            task.runs.removeAll()
+        }
+        
+        try? modelContext.save()
     }
 }
 
-#Preview {
-    ActivityView()
-        .environmentObject(TaskStore())
-        .frame(width: 900, height: 600)
-}
+//#Preview {
+//    ActivityView()
+//        //.environmentObject(TaskStore())
+//        .frame(width: 900, height: 600)
+//}
